@@ -62,9 +62,13 @@ end
 local function toUnicode(string)
     local codepoints = "utf8.char("
     
-    for _i, v in utf8.codes(string) do
-        codepoints = codepoints .. v .. ', '
-    end
+    local success = pcall(function()
+        for _i, v in utf8.codes(string) do
+            codepoints = codepoints .. v .. ', '
+        end
+    end)
+
+    if not success then return "INVALID UTF-8 code" end
     
     return codepoints:sub(1, -3) .. ')'
 end
