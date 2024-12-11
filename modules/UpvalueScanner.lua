@@ -37,7 +37,7 @@ local function scan(query, deepSearch)
 
     for _i, closure in pairs(getGc()) do
         if type(closure) == "function" and not iscclosure(closure) and not isXClosure(closure) and not upvalues[closure] then
-            for index, value in pairs( (getUpvalues(closure)) or {} ) do
+            for index, value in pairs( (getUpvalues(closure) or {}) ) do
                 local valueType = type(value)
     
                 if valueType ~= "table" and compareUpvalue(query, value) then
