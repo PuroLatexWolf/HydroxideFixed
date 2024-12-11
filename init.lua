@@ -78,7 +78,13 @@ if PROTOSMASHER_LOADED then
 end
 
 local oldGetUpvalue = globalMethods.getUpvalue
-local oldGetUpvalues = globalMethods.getUpvalues
+local oldGetUpvalues = function(closure) 
+    local success, result = pcall(function() 
+        globalMethods.getUpvalues(closure)
+    end)
+    
+    if success then return result end
+end)
 
 globalMethods.getUpvalue = function(closure, index)
     if type(closure) == "table" then
