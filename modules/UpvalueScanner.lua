@@ -37,42 +37,44 @@ local function scan(query, deepSearch)
 
     for _i, closure in pairs(getGc()) do
         if type(closure) == "function" and not iscclosure(closure) and not isXClosure(closure) and not upvalues[closure] then
-            for index, value in pairs(getUpvalues(closure)) do
-                local valueType = type(value)
-
-                if valueType ~= "table" and compareUpvalue(query, value) then
-                    local storage = upvalues[closure]
-
-                    if not storage then
-                        local newClosure = Closure.new(closure)
-                        newClosure.Upvalues[index] = Upvalue.new(newClosure, index, value)
-                        upvalues[closure] = newClosure
-                    else
-                        storage.Upvalues[index] = Upvalue.new(storage, index, value)
-                    end
-                elseif deepSearch and valueType == "table" then
-                    local storage = upvalues[closure]
-                    local table
-
-                    for i, v in pairs(value) do
-                        if (i ~= value and v ~= value) and (compareUpvalue(query, i, true) or compareUpvalue(query, v)) then
-                            if not storage then
-                                local newClosure = Closure.new(closure)
-                                storage = newClosure
-                                upvalues[closure] = newClosure
+            pcall(function()
+                for index, value in pairs(getUpvalues(closure)) do
+                    local valueType = type(value)
+    
+                    if valueType ~= "table" and compareUpvalue(query, value) then
+                        local storage = upvalues[closure]
+    
+                        if not storage then
+                            local newClosure = Closure.new(closure)
+                            newClosure.Upvalues[index] = Upvalue.new(newClosure, index, value)
+                            upvalues[closure] = newClosure
+                        else
+                            storage.Upvalues[index] = Upvalue.new(storage, index, value)
+                        end
+                    elseif deepSearch and valueType == "table" then
+                        local storage = upvalues[closure]
+                        local table
+    
+                        for i, v in pairs(value) do
+                            if (i ~= value and v ~= value) and (compareUpvalue(query, i, true) or compareUpvalue(query, v)) then
+                                if not storage then
+                                    local newClosure = Closure.new(closure)
+                                    storage = newClosure
+                                    upvalues[closure] = newClosure
+                                end
+    
+                                if not table then
+                                    table = Upvalue.new(storage, index, value)
+                                    table.Scanned = {}
+                                    storage.Upvalues[index] = table
+                                end
+    
+                                table.Scanned[i] = v
                             end
-
-                            if not table then
-                                table = Upvalue.new(storage, index, value)
-                                table.Scanned = {}
-                                storage.Upvalues[index] = table
-                            end
-
-                            table.Scanned[i] = v
                         end
                     end
                 end
-            end
+            end)
         end
     end
 
