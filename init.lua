@@ -89,11 +89,24 @@ globalMethods.getUpvalue = function(closure, index)
 end
 
 globalMethods.getUpvalues = function(closure)
-    if type(closure) == "table" then
-        return oldGetUpvalues(closure.Data)
+    local success, result = pcall(function() 
+        if type(closure) == "table" then
+            return debug.getupvalues(closure.Data)
+        end
+        return debug.getupvalues(closure)
+    end)
+    
+    if type(result) == "function" then
+        result = debug.getupvalues(result)
+    end
+    
+    if type(result) ~= "table" then
+        warn("invalid result type", tostring(closure), type(result))
+        
+        return nil
     end
 
-    return oldGetUpvalues(closure)
+    if success then return result end
 end
 
 environment.hasMethods = hasMethods
