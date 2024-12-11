@@ -93,7 +93,9 @@ globalMethods.getUpvalues = function(closure)
         return oldGetUpvalues(closure.Data)
     end
 
-    return oldGetUpvalues(closure)
+    if globalMethods.isLClosure then
+        return oldGetUpvalues(closure)
+    end
 end
 
 environment.hasMethods = hasMethods
