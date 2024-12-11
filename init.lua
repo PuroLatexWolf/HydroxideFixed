@@ -96,6 +96,10 @@ globalMethods.getUpvalues = function(closure)
 
         return oldGetUpvalues(closure)
     end)
+
+    if type(result) ~= "table" then
+        return nil
+    end
     
     if success then return result or {} end
 end
