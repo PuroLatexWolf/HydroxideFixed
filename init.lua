@@ -97,7 +97,7 @@ globalMethods.getUpvalues = function(closure)
         return oldGetUpvalues(closure)
     end)
     
-    if success then return result end
+    if success then return result or {} end
 end
 
 environment.hasMethods = hasMethods
