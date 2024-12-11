@@ -103,7 +103,7 @@ globalMethods.getUpvalues = function(closure)
     if type(result) ~= "table" then
         --warn("invalid result type", tostring(closure), type(result))
         
-        return nil
+        return {}
     end
 
     if success then return result end
