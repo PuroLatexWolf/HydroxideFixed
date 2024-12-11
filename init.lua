@@ -78,13 +78,7 @@ if PROTOSMASHER_LOADED then
 end
 
 local oldGetUpvalue = globalMethods.getUpvalue
-local oldGetUpvalues = function(closure) 
-    local success, result = pcall(function() 
-        globalMethods.getUpvalues(closure)
-    end)
-    
-    if success then return result end
-end)
+local oldGetUpvalues = globalMethods.getUpvalues
 
 globalMethods.getUpvalue = function(closure, index)
     if type(closure) == "table" then
@@ -95,11 +89,15 @@ globalMethods.getUpvalue = function(closure, index)
 end
 
 globalMethods.getUpvalues = function(closure)
-    if type(closure) == "table" then
-        return oldGetUpvalues(closure.Data)
-    end
+     local success, result = pcall(function() 
+        if type(closure) == "table" then
+            return oldGetUpvalues(closure.Data)
+        end
 
-    return oldGetUpvalues(closure)
+        return oldGetUpvalues(closure)
+    end)
+    
+    if success then return result end
 end
 
 environment.hasMethods = hasMethods
