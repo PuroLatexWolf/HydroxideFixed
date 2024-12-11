@@ -97,6 +97,10 @@ globalMethods.getUpvalues = function(closure)
         return oldGetUpvalues(closure)
     end)
 
+    if type(result) == "function" then
+        result = debug.getupvalues(result)
+    end
+    
     if type(result) ~= "table" then
         warn("invalid result type", tostring(closure), type(result))
         
