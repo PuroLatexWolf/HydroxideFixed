@@ -368,7 +368,7 @@ local function createArg(instance, index, value)
     local arg = Assets.RemoteArg:Clone()
     local valueType = type(value)
 
-    arg.Icon.Image = oh.Constants.Types[valueType]
+    arg.Icon.Image = oh.Constants.Types[valueType] or oh.Constants.Types["integral"]
     arg.Index.Text = index
     
     if valueType == "table" then
